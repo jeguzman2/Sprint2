@@ -27,7 +27,7 @@ public class OrdenAlistamientoController {
         this.usuarioRepository = usuarioRepository;
     }
 
-    /** Crear con estado inicial (enum) y operario asignado, usando Body JSON */
+    
     @PostMapping
     public ResponseEntity<OrdenAlistamiento> crear(@RequestBody OrdenAlistamientoDTO dto) {
         OrdenAlistamiento orden = new OrdenAlistamiento();
@@ -46,7 +46,7 @@ public class OrdenAlistamientoController {
         return ResponseEntity.ok(creada);
     }
 
-    /** Asignar/cambiar operario */
+    
     @PatchMapping("/{id}/asignar-operario")
     public ResponseEntity<OrdenAlistamiento> asignarOperario(@PathVariable Long id,
                                                              @RequestParam Long idOperario) {

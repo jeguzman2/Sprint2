@@ -1,13 +1,14 @@
 package com.provesi.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.provesi.demo.model.EstadoProducto;
 import com.provesi.demo.model.Producto;
 import com.provesi.demo.repositorios.ProductoRepository;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -19,8 +20,7 @@ public class ProductoService {
     this.productoRepo = productoRepo;
   }
 
-  // Si no te mandan estado en el JSON, ponle uno por defecto
-  // Este método fue eliminado para evitar duplicidad de la firma 'crear(Producto)'
+  
 
   @Transactional
   public Producto crear(Producto p) {
@@ -58,6 +58,22 @@ public class ProductoService {
   public List<Producto> listar() {
     return productoRepo.findAll();
   }
+
+  // METODO PARA ACTUALIZAR EL ESTADO DEL PRODUCTO ASR2
+  @Transactional
+  public Producto actualizarEstado(Long id, EstadoProducto nuevoEstado) {
+        // Buscar producto por ID
+        Optional<Producto> productoOptional = productoRepo.findById(id);
+
+        if (productoOptional.isPresent()) {
+            Producto producto = productoOptional.get();
+            producto.setEstado(nuevoEstado); // cambiar estado
+            return productoRepo.save(producto); // guardar cambio
+        } else {
+            throw new RuntimeException("Producto no encontrado con ID: " + id);
+        }
+    }
+
 
   @Transactional
   public void eliminar(Long id) {
