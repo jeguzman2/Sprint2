@@ -4,5 +4,6 @@ public enum EstadoProducto {
 
     ACTIVO,
     INACTIVO,
-    SIN_REGISTRO
+    SIN_REGISTRO,
+    LISTO_PARA_SALIR_BODEGA
 }
