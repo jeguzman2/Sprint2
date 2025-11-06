@@ -43,18 +43,12 @@ public class PedidoService {
 
     // Cambiar estado del pedido
     @Transactional
-    public Pedido cambiarEstado(int idPedido, String nuevoEstado) {
-    Pedido pedido = pedidoRepository.findById((long) idPedido)
-            .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+    public Pedido cambiarEstado(Long id, EstadoPedido nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Pedido no encontrado con ID: " + id));
 
-    // Convertir el String recibido al enum EstadoPedido
-    try {
-        EstadoPedido estadoEnum = EstadoPedido.valueOf(nuevoEstado.toUpperCase());
-        pedido.setEstado(estadoEnum);
-    } catch (IllegalArgumentException e) {
-        throw new RuntimeException("Estado inválido: " + nuevoEstado);
+        pedido.setEstado(nuevoEstado);
+        return pedidoRepository.save(pedido);
     }
-
-    return pedidoRepository.save(pedido);
-}
 }

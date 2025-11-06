@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.provesi.demo.model.EstadoPedido;
 import com.provesi.demo.model.Pedido;
 import com.provesi.demo.service.PedidoService;
 
@@ -39,13 +40,14 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
-    // Cambiar estado con PUT
+    // Cambiar estado con PUT (ASR3- Disponibilidad)
+    
     @PutMapping("/{id}/estado")
     public ResponseEntity<Pedido> cambiarEstado(
-            @PathVariable int id,
-            @RequestParam String nuevoEstado) {
+        @PathVariable Long id,
+        @RequestParam EstadoPedido nuevoEstado) {
 
-        Pedido actualizado = pedidoService.cambiarEstado(id, nuevoEstado);
-        return ResponseEntity.ok(actualizado);
-    }
+    Pedido actualizado = pedidoService.cambiarEstado(id, nuevoEstado);
+    return ResponseEntity.ok(actualizado);
+}
 }
