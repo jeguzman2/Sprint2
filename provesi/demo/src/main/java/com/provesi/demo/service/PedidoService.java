@@ -3,6 +3,7 @@ package com.provesi.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.stereotype.Service;
 
 import com.provesi.demo.model.EstadoPedido;
@@ -12,6 +13,7 @@ import com.provesi.demo.repositorios.PedidoRepository;
 import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
