@@ -1,7 +1,9 @@
 package com.provesi.demo.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,19 +13,20 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "pedidos")
-public class Pedido {
+public class Pedido implements Serializable {
 
     @Id
+    @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "fecha",  nullable = false, length = 50)
     private LocalDate fecha;
 
-    @Column(nullable = false)
+    @Column(name = "estado", nullable = false)
     private EstadoPedido estado;
 
-    @Column(nullable = false)
+    @Column(name = "total", nullable = false)
     private float total;
 
 
