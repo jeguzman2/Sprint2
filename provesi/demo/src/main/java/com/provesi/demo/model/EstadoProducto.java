@@ -7,3 +7,4 @@ public enum EstadoProducto {
     SIN_REGISTRO,
     LISTO_PARA_SALIR_BODEGA
 }
+

@@ -2,6 +2,7 @@ package com.provesi.demo.controller;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,7 @@ public class UbicacionController {
   }
 
   @GetMapping("/{id}")
+  @Cacheable(value = "ubicaciones", key = "#id")
   public ResponseEntity<Ubicacion> obtener(@PathVariable Long id) {
     Ubicacion u = ubicacionService.obtener(id);
     return ResponseEntity.ok(u);

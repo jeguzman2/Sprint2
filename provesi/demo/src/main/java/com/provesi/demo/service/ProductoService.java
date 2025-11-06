@@ -59,7 +59,7 @@ public class ProductoService {
     return productoRepo.findAll();
   }
 
-  // METODO PARA ACTUALIZAR EL ESTADO DEL PRODUCTO ASR2
+  // METODO PARA ACTUALIZAR EL ESTADO DEL PRODUCTO ASR-2
   @Transactional
   public Producto actualizarEstado(Long id, EstadoProducto nuevoEstado) {
         // Buscar producto por ID
