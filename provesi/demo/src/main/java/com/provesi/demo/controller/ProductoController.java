@@ -25,12 +25,11 @@ public class ProductoController {
 
     private final ProductoService productoService;
     private final ConsultaProductoService consultaProductoService;
-    private final ProductoService productoRepo;
 
-  public ProductoController(ProductoService productoService, ConsultaProductoService consultaProductoService, ProductoService productoRepo) {
+  public ProductoController(ProductoService productoService, ConsultaProductoService consultaProductoService) {
     this.productoService = productoService;
     this.consultaProductoService = consultaProductoService;
-    this.productoRepo = productoRepo;
+    
   }
 
   @PostMapping
