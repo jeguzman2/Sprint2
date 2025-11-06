@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "inventarios", indexes = @Index(name = "idx_inv_prod_fecha", columnList = "producto_id,updatedAt"))
+@Table(name = "inventarios"
+//,indexes = @Index(name = "idx_inv_prod_fecha", columnList = "producto_id,updatedAt")
+)
 
 public class Inventario {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
