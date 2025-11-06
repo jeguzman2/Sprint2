@@ -9,5 +9,4 @@ import com.provesi.demo.model.Pedido;
 @Repository
 public interface PedidoRepository extends JpaRepository <Pedido, Long> {
 
-    List<Pedido> findByClienteId(Long clienteId);
 }
