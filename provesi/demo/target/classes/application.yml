@@ -1,0 +1,36 @@
+
+server: 
+    port: 8080
+
+provesi:
+  auth:
+    issuer: https://dev-2et6uyo284zxvxpk.us.auth0.com/
+    audience: https://api.provesi.com
+    role-namespace: https://provesi.com/claims
+    mgmt:
+      domain: dev-2et6uyo284zxvxpk.us.auth0.com
+      audience: https://dev-2et6uyo284zxvxpk.us.auth0.com/api/v2/
+      client-id: CTEwDSQi8jWoNyt77w8K9zFhbTnfhYoz
+      client-secret: gnLdgBnwqrSAjyYVKg7BR2oDdAs8NS8uKXYz7oB1Vev-OMQznOigAXfUb2DMiaWj
+      roles:
+        ADMIN: rol_7XuEjgc5t36wETCk
+        SUPERVISOR: rol_lpIc2WEl9arRvz8F
+        MEMBER: rol_HouNp4UvQilPT6oe
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            #  Estos son de tu **Regular Web App** (NO la M2M)
+            client-id: QERWYwAjJQbvnNkox8MW35hb1xizkq4r
+            client-secret: su25uKRdC9ugK8HDAnMponpNwuMZ5GlzF3Hk3xAJYk5iqQ9UVAwsUFpHw1JA1cPF
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, profile, email
+            client-name: Auth0
+        provider:
+          auth0:
+            # Mismo issuer de tu tenant (con slash final)
+            issuer-uri: https://dev-2et6uyo284zxvxpk.us.auth0.com/
