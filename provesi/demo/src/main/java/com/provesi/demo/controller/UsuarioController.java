@@ -1,6 +1,7 @@
 package com.provesi.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+ import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.provesi.demo.model.Usuario;
 import com.provesi.demo.service.UsuarioService;
@@ -54,16 +59,34 @@ public class UsuarioController {
     return ResponseEntity.ok(u);
   }
 
-  @GetMapping
-  @PreAuthorize("isAuthenticated()")
-  public ResponseEntity<List<Usuario>> listar(
-              @AuthenticationPrincipal OidcUser principal
-        ) 
-  {
-    System.out.println("Listar usuarios solicitado por: " + principal.getProfile());
-    List<Usuario> lista = usuarioService.listar();
-    return ResponseEntity.ok(lista);
-  }
+
+
+
+@PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")  // opcional, pero recomendado
+public ResponseEntity<List<Usuario>> listarUsuarios(
+        @AuthenticationPrincipal OidcUser user) {
+
+    // Authorities: aquí ya deben venir ROLE_ADMIN, ROLE_SUPERVISOR, etc.
+    var authorities = user.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .toList();
+
+    System.out.println("Authorities = " + authorities);
+
+    // Si quieres el rol que metiste en el claim "claims":
+    Object claimsObj = user.getClaims().get("claims");
+    String rolDesdeClaim = null;
+    if (claimsObj instanceof Map<?,?> map) {
+        Object r = map.get("role");
+        if (r != null) rolDesdeClaim = r.toString();
+    }
+    System.out.println("Rol desde claim = " + rolDesdeClaim);
+
+    List<Usuario> usuarios = usuarioService.listar();
+    return ResponseEntity.ok(usuarios);
+}
+
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> eliminar(@PathVariable Long id) {
