@@ -1,5 +1,6 @@
 package com.provesi.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,16 +88,32 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
       System.out.println("Acceso denegado para listar usuarios.");
         return ResponseEntity.status(401).build();
     }
-
+  
     List<Usuario> usuarios = usuarioService.listar();
     return ResponseEntity.ok(usuarios);
 }
 
 @GetMapping("/vulnerable/{id}")
-  // Si quieres, lo puedes proteger con rol admin:
-  public List<Usuario> probarVulnerable(@PathVariable String id) {
-      return usuarioService.buscarVulnerable(id);
+public ResponseEntity<?> probarVulnerable(@PathVariable String id) {
+    try {
+        List<Usuario> usuarios = usuarioService.buscarVulnerable(id);
+        return ResponseEntity.ok(usuarios);
+    } catch (IllegalArgumentException e) {
+        // Aquí capturamos "Entrada maliciosa detectada..." y respondemos bonito
+        Map<String, Object> body = new HashMap<>();
+        body.put("msg", e.getMessage());
+        body.put("status", 400);
+
+        return ResponseEntity.badRequest().body(body);
+    } catch (Exception e) {
+        // Por si pasa algo inesperado, para que no sea EMPTY_RESPONSE
+        Map<String, Object> body = new HashMap<>();
+        body.put("msg", "Error interno del servidor");
+        body.put("status", 500);
+        return ResponseEntity.internalServerError().body(body);
+    }
 }
+
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> eliminar(@PathVariable Long id) {
