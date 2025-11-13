@@ -33,7 +33,7 @@ import jakarta.persistence.PersistenceContext;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -99,7 +99,7 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
     return ResponseEntity.ok(usuarios);
 }
 
-@GetMapping("/vulnerable/{id}")
+@GetMapping("/vulnerable")
 public ResponseEntity<?> probarVulnerable(@PathVariable String id) {
     Map<String, Object> body = new HashMap<>();
 
