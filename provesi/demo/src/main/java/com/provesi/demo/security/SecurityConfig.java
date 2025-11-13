@@ -3,6 +3,7 @@ package com.provesi.demo.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(auth -> auth
       .requestMatchers("/health", "/public/**", "/").permitAll()
+      .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
       .requestMatchers("/admin/**").hasRole("ADMIN")
       .anyRequest().authenticated()
     )
