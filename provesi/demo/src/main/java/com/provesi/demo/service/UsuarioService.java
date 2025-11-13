@@ -26,19 +26,32 @@ public class UsuarioService {
 
   @Transactional
   public Usuario actualizar(Long idUsuario, Usuario cambios) {
-    if (idUsuario != null)
-    {
-      var existente = usuarioRepo.findById(idUsuario)
-          .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
-      existente.setNombre(cambios.getNombre());
-      existente.setEmail(cambios.getEmail());
-      existente.setEstado(cambios.getEstado());
-      existente.setRol(cambios.getRol());
-      return usuarioRepo.save(existente);
+    var existente = usuarioRepo.findById(idUsuario)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
+
+    // Solo actualiza lo que venga en el body (merge parcial)
+    if (cambios.getNombre() != null) {
+        existente.setNombre(cambios.getNombre());
     }
 
-    // (El rol sólo si lo tienes en la entidad; si no, omítelo)
-    return null;
+    if (cambios.getEmail() != null) {
+        // validar email unique
+        if (!cambios.getEmail().equals(existente.getEmail()) &&
+                usuarioRepo.existsByEmail(cambios.getEmail())) {
+            throw new IllegalArgumentException("El email ya está registrado: " + cambios.getEmail());
+        }
+        existente.setEmail(cambios.getEmail());
+    }
+
+    if (cambios.getEstado() != null) {
+        existente.setEstado(cambios.getEstado());
+    }
+
+    if (cambios.getRol() != null) {
+        existente.setRol(cambios.getRol());
+    }
+
+    return usuarioRepo.save(existente);
 
   }
 
