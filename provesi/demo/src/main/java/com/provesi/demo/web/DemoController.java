@@ -19,6 +19,7 @@ public class DemoController {
 
   @GetMapping("/me")
   public Map<String, Object> me(@AuthenticationPrincipal OidcUser user) {
+    System.out.println(user);
     return Map.of(
       "sub", user.getSubject(),
       "email", user.getEmail(),
