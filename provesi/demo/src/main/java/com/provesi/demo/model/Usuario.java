@@ -21,7 +21,7 @@ public class Usuario {
   @Column(nullable = false, length = 120)
   private EstadoUsuario estado;  // Ej. Activo/Inactivo
 
-  @Column(nullable = false, length = 20)
+  @Column(nullable = false, length = 120)
   private String rol;
 
     public Long getIdUsuario() {
