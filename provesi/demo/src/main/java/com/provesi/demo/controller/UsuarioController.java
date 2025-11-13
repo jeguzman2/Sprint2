@@ -25,11 +25,17 @@ import org.springframework.security.core.GrantedAuthority;
 import com.provesi.demo.model.Usuario;
 import com.provesi.demo.service.UsuarioService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
   public UsuarioController(UsuarioService usuarioService) {
     this.usuarioService = usuarioService;
@@ -95,20 +101,42 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
 
 @GetMapping("/vulnerable/{id}")
 public ResponseEntity<?> probarVulnerable(@PathVariable String id) {
-    try {
-        List<Usuario> usuarios = usuarioService.buscarVulnerable(id);
-        return ResponseEntity.ok(usuarios);
-    } catch (IllegalArgumentException e) {
-        // Aquí capturamos "Entrada maliciosa detectada..." y respondemos bonito
-        Map<String, Object> body = new HashMap<>();
-        body.put("msg", e.getMessage());
-        body.put("status", 400);
+    Map<String, Object> body = new HashMap<>();
 
-        return ResponseEntity.badRequest().body(body);
+    try {
+        // 1. Detectar ataque antes de tocar la BD
+        String lower = id.toLowerCase();
+        boolean esMalicioso =
+                lower.contains(" or ")
+             || lower.contains(" and ")
+             || lower.contains("1=1")
+             || lower.contains("--")
+             || lower.contains("/*")
+             || lower.contains("*/")
+             || lower.contains(" drop ")
+             || lower.contains(" delete ")
+             || lower.contains(" update ")
+             || lower.contains(" insert ")
+             || lower.contains(" union ");
+
+        if (esMalicioso) {
+            body.put("msg", "Entrada maliciosa detectada en el parámetro id.");
+            body.put("status", 400);
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        // 2. Si no es malicioso, ejecutamos la query VULNERABLE
+        String sql = "SELECT * FROM usuario WHERE id_usuario = " + id;
+
+        List<Usuario> usuarios = entityManager
+                .createNativeQuery(sql, Usuario.class)
+                .getResultList();
+
+        return ResponseEntity.ok(usuarios);
+
     } catch (Exception e) {
-        // Por si pasa algo inesperado, para que no sea EMPTY_RESPONSE
-        Map<String, Object> body = new HashMap<>();
-        body.put("msg", "Error interno del servidor");
+        // 3. Cualquier excepción inesperada se responde como JSON
+        body.put("msg", "Error interno del servidor: " + e.getClass().getSimpleName());
         body.put("status", 500);
         return ResponseEntity.internalServerError().body(body);
     }
