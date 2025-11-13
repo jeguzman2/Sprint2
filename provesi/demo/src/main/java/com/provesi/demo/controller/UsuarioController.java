@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,8 +55,12 @@ public class UsuarioController {
   }
 
   @GetMapping
-  @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<List<Usuario>> listar() {
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<List<Usuario>> listar(
+              @AuthenticationPrincipal OidcUser principal
+        ) 
+  {
+    System.out.println("Listar usuarios solicitado por: " + principal.getProfile());
     List<Usuario> lista = usuarioService.listar();
     return ResponseEntity.ok(lista);
   }
