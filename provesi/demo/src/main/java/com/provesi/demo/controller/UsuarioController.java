@@ -84,6 +84,7 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
     if (rolDesdeClaim != null && rolDesdeClaim.equals("ADMIN")) {
         System.out.println("Acceso concedido para listar usuarios.");
     } else {
+      System.out.println("Acceso denegado para listar usuarios.");
         return ResponseEntity.status(401).build();
     }
 
