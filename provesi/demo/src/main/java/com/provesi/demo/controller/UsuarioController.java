@@ -60,7 +60,7 @@ public class UsuarioController {
   }
 
 @GetMapping("")
-@PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")  // opcional, pero recomendado
+@PreAuthorize("isAuthenticated()")  // opcional, pero recomendado
 public ResponseEntity<List<Usuario>> listarUsuarios(
         @AuthenticationPrincipal OidcUser user) {
 
