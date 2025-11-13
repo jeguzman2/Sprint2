@@ -17,6 +17,7 @@ public class Usuario {
   @Column(nullable = false, unique = true, length = 150)
   private String email;
 
+  @Enumerated(EnumType.STRING) 
   @Column(nullable = false, length = 20)
   private EstadoUsuario estado;  // Ej. Activo/Inactivo
 
