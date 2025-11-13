@@ -27,9 +27,11 @@ public class SecurityConfig {
   private String roleNamespace;
 
   @Bean
-  SecurityFilterChain filter(HttpSecurity http, ClientRegistrationRepository clients) throws Exception {
+  SecurityFilterChain filter(HttpSecurity http, ClientRegistrationRepository clients, TestAuthFilter testAuthFilter) throws Exception {
     http
     .csrf(csrf -> csrf.disable())
+    .addFilterBefore(testAuthFilter,
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
     .authorizeHttpRequests(auth -> auth
       .requestMatchers("/health", "/public/**", "/").permitAll()
       .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
