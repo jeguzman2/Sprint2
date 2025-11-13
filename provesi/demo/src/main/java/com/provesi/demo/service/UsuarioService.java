@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.provesi.demo.model.Usuario;
 import com.provesi.demo.repositorios.UsuarioRepository;
+import com.provesi.demo.security.MaliciusInputValidator;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,12 +17,14 @@ import javax.swing.text.html.parser.Entity;
 public class UsuarioService {
 
   private final UsuarioRepository usuarioRepo;
-  
+  private final MaliciusInputValidator validator;
+
   @PersistenceContext
   private EntityManager entityManager;
 
-  public UsuarioService(UsuarioRepository usuarioRepo) {
+  public UsuarioService(UsuarioRepository usuarioRepo, MaliciusInputValidator validator) {
     this.usuarioRepo = usuarioRepo;
+    this.validator = validator;
   }
 
   @Transactional
@@ -93,8 +96,11 @@ public class UsuarioService {
     usuarioRepo.deleteById(id);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public List<Usuario> buscarVulnerable(String idRaw) {
+    if (validator.contieneAtaque(idRaw)) {
+        throw new IllegalArgumentException("Input contains malicious content");
+    }
       // AQUÍ concatenamos el valor directamente => vulnerable a SQL Injection
       String sql = "SELECT * FROM usuarios WHERE id_usuario = " + idRaw;
       return entityManager.createNativeQuery(sql, Usuario.class).getResultList();
