@@ -18,7 +18,7 @@ public class Usuario {
   private String email;
 
   @Enumerated(EnumType.STRING) 
-  @Column(nullable = false, length = 20)
+  @Column(nullable = false, length = 120)
   private EstadoUsuario estado;  // Ej. Activo/Inactivo
 
   @Column(nullable = false, length = 20)
