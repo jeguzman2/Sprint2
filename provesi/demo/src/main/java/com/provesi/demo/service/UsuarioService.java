@@ -26,21 +26,29 @@ public class UsuarioService {
 
   @Transactional
   public Usuario actualizar(Long idUsuario, Usuario cambios) {
-    var existente = usuarioRepo.findById(idUsuario)
-        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
+    if (idUsuario != null)
+    {
+      var existente = usuarioRepo.findById(idUsuario)
+          .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
+      existente.setNombre(cambios.getNombre());
+      existente.setEmail(cambios.getEmail());
+      existente.setEstado(cambios.getEstado());
+      return usuarioRepo.save(existente);
+    }
 
-    existente.setNombre(cambios.getNombre());
-    existente.setEmail(cambios.getEmail());
-    existente.setEstado(cambios.getEstado());
     // (El rol sólo si lo tienes en la entidad; si no, omítelo)
+    return null;
 
-    return usuarioRepo.save(existente);
   }
 
   @Transactional(readOnly = true)
   public Usuario obtener(Long id) {
-    return usuarioRepo.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + id));
+    if (id != null) {
+
+      return usuarioRepo.findById(id)
+          .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + id));
+    }
+    return null;
   }
 
   @Transactional(readOnly = true)
@@ -56,9 +64,10 @@ public class UsuarioService {
 
   @Transactional
   public void eliminar(Long id) {
-    if (!usuarioRepo.existsById(id)) {
+    if (id == null || !usuarioRepo.existsById(id)) {
       throw new IllegalArgumentException("Usuario no existe: " + id);
     }
+
     usuarioRepo.deleteById(id);
   }
 }

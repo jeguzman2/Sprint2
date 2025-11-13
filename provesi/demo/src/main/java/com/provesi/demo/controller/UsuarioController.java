@@ -3,6 +3,7 @@ package com.provesi.demo.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class UsuarioController {
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Usuario> actualizar(@PathVariable Long id, @RequestBody Usuario cambios) {
     Usuario actualizado = usuarioService.actualizar(id, cambios);
     return ResponseEntity.ok(actualizado);
@@ -51,6 +53,7 @@ public class UsuarioController {
   }
 
   @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<Usuario>> listar() {
     List<Usuario> lista = usuarioService.listar();
     return ResponseEntity.ok(lista);
