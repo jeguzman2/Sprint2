@@ -33,6 +33,7 @@ public class UsuarioService {
       existente.setNombre(cambios.getNombre());
       existente.setEmail(cambios.getEmail());
       existente.setEstado(cambios.getEstado());
+      existente.setRol(cambios.getRol());
       return usuarioRepo.save(existente);
     }
 
