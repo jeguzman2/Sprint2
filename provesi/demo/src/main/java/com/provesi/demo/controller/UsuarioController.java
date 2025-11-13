@@ -100,7 +100,7 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
 }
 
 @GetMapping("/vulnerable")
-public ResponseEntity<?> probarVulnerable(@PathVariable String id) {
+public ResponseEntity<?> probarVulnerable(@RequestParam String id) {
     Map<String, Object> body = new HashMap<>();
 
     try {
