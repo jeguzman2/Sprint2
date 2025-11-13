@@ -18,7 +18,7 @@ public class Usuario {
   private String email;
 
   @Column(nullable = false, length = 20)
-  private String estado;  // Ej. Activo/Inactivo
+  private EstadoUsuario estado;  // Ej. Activo/Inactivo
 
   @Column(nullable = false, length = 20)
   private String rol;
@@ -41,10 +41,10 @@ public class Usuario {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getEstado() {
+    public EstadoUsuario getEstado() {
         return estado;
     }
-    public void setEstado(String estado) {
+    public void setEstado(EstadoUsuario estado) {
         this.estado = estado;
     }
     public String getRol() {
