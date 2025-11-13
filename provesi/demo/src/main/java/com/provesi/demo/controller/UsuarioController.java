@@ -92,6 +92,12 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
     return ResponseEntity.ok(usuarios);
 }
 
+@GetMapping("/usuarios/vulnerable/{id}")
+  // Si quieres, lo puedes proteger con rol admin:
+  @PreAuthorize("hasRole('ADMIN')")
+  public List<Usuario> probarVulnerable(@PathVariable String id) {
+      return usuarioService.buscarVulnerable(id);
+}
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> eliminar(@PathVariable Long id) {

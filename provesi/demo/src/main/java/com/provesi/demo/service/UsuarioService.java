@@ -5,12 +5,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.provesi.demo.model.Usuario;
 import com.provesi.demo.repositorios.UsuarioRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import java.util.List;
+
+import javax.swing.text.html.parser.Entity;
 
 @Service
 public class UsuarioService {
 
   private final UsuarioRepository usuarioRepo;
+  
+  @PersistenceContext
+  private EntityManager entityManager;
 
   public UsuarioService(UsuarioRepository usuarioRepo) {
     this.usuarioRepo = usuarioRepo;
@@ -29,7 +37,7 @@ public class UsuarioService {
     var existente = usuarioRepo.findById(idUsuario)
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
 
-    // Solo actualiza lo que venga en el body (merge parcial)
+    // Solo actualiza lo que venga en el body porque aja 
     if (cambios.getNombre() != null) {
         existente.setNombre(cambios.getNombre());
     }
@@ -83,5 +91,12 @@ public class UsuarioService {
     }
 
     usuarioRepo.deleteById(id);
+  }
+
+  @Transactional
+  public List<Usuario> buscarVulnerable(String idRaw) {
+      // AQUÍ concatenamos el valor directamente => vulnerable a SQL Injection
+      String sql = "SELECT * FROM usuarios WHERE id_usuario = " + idRaw;
+      return entityManager.createNativeQuery(sql, Usuario.class).getResultList();
   }
 }
