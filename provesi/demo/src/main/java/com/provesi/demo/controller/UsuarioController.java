@@ -61,6 +61,10 @@ public class UsuarioController {
 
 
 
+@GetMapping("")
+public String getMethodName(@RequestParam String param) {
+    return new String();
+}
 
 @PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")  // opcional, pero recomendado
 public ResponseEntity<List<Usuario>> listarUsuarios(
