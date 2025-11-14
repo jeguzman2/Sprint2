@@ -33,7 +33,7 @@ public class SecurityConfig {
     .addFilterBefore(testAuthFilter,
                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
     .authorizeHttpRequests(auth -> auth
-      .requestMatchers("/health", "/public/**", "/").permitAll()
+      .requestMatchers("/public/**", "/").permitAll()
       .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
       .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
       .requestMatchers("/admin/**").hasRole("ADMIN")
