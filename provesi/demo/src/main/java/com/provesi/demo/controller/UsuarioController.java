@@ -126,7 +126,7 @@ public ResponseEntity<?> probarVulnerable(@RequestParam String idRaw) {
         }
 
         // 2. Si no es malicioso, ejecutamos la query VULNERABLE
-        String sql = "SELECT * FROM usuario WHERE id_usuario = " + idRaw;
+        String sql = "SELECT * FROM usuarios WHERE id_usuario = " + idRaw;
 
         List<Usuario> usuarios = entityManager
                 .createNativeQuery(sql, Usuario.class)
