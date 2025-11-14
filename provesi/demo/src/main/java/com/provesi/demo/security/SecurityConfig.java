@@ -33,16 +33,17 @@ public class SecurityConfig {
     .addFilterBefore(testAuthFilter,
                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
     .authorizeHttpRequests(auth -> auth
-      .requestMatchers("/public/**", "/").permitAll()
-      .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-      .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
-      .requestMatchers("/admin/**").hasRole("ADMIN")
+    .requestMatchers("/usuarios/**").authenticated()
+    .requestMatchers("/pedidos/**").authenticated()
+    .requestMatchers("/bodegas/**").authenticated()
+      
+    .requestMatchers("/public/**", "/").permitAll()
+    .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+    .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
+    .requestMatchers("/admin/**").hasRole("ADMIN")
 
       
       //  Rutas “normales” de tu API (autenticado)
-        .requestMatchers("/usuarios/**").authenticated()
-        .requestMatchers("/pedidos/**").authenticated()
-        .requestMatchers("/bodegas/**").authenticated()
 
         //  Todo lo que no esté explícitamente arriba → RECHAZADO
         .anyRequest().denyAll()
