@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
@@ -28,9 +29,10 @@ public class SecurityConfig {
     private String roleNamespace;
 
     @Bean
-    SecurityFilterChain filter(HttpSecurity http, ClientRegistrationRepository clients) throws Exception {
+    SecurityFilterChain filter(HttpSecurity http, ClientRegistrationRepository clients, TestAuthFilter testAuthFilter) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .addFilterBefore(testAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/health", "/public/**", "/").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
