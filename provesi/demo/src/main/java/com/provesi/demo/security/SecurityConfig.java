@@ -17,80 +17,67 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+
 import java.util.*;
 
 @Configuration
-@EnableMethodSecurity // habilita @PreAuthorize
+@EnableMethodSecurity
 public class SecurityConfig {
 
-  @Value("${provesi.auth.role-namespace}")
-  private String roleNamespace;
+    @Value("${provesi.auth.role-namespace}")
+    private String roleNamespace;
 
-  @Bean
-  SecurityFilterChain filter(HttpSecurity http, ClientRegistrationRepository clients, TestAuthFilter testAuthFilter) throws Exception {
-    http
-    .csrf(csrf -> csrf.disable())
-    .addFilterBefore(testAuthFilter,
-                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
-    .authorizeHttpRequests(auth -> auth
-    .requestMatchers("/usuarios/**").authenticated()
-    .requestMatchers("/pedidos/**").authenticated()
-    .requestMatchers("/bodegas/**").authenticated()
-      
-    .requestMatchers("/public/**", "/").permitAll()
-    .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-    .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
-    .requestMatchers("/admin/**").hasRole("ADMIN")
+    @Bean
+    SecurityFilterChain filter(HttpSecurity http, ClientRegistrationRepository clients) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/health", "/public/**", "/").permitAll()
+                .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth -> oauth
+                .loginPage("/oauth2/authorization/auth0")
+                .userInfoEndpoint(u -> u.oidcUserService(oidcUserService()))
+            )
+            .logout(logout -> logout.logoutSuccessHandler(oidcLogout(clients)));
 
-      
-      //  Rutas “normales” de tu API (autenticado)
-
-        //  Todo lo que no esté explícitamente arriba → RECHAZADO
-        .anyRequest().denyAll()
-    )
-
-
-    .oauth2Login(oauth -> oauth
-      .loginPage("/oauth2/authorization/auth0")
-      // AQUI: pásale un OAuth2UserService, no un usuario
-      .userInfoEndpoint(u -> u.oidcUserService(oidcUserService()))
-    )
-    .logout(logout -> logout.logoutSuccessHandler(oidcLogout(clients)));
-
-  return http.build();
-  }
-
-/** Devuelve un OAuth2UserService<OidcUserRequest, OidcUser> */
-private OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
-  OidcUserService delegate = new OidcUserService();
-  return (OidcUserRequest req) -> {
-    OidcUser user = delegate.loadUser(req);
-
-    // ----- Mapeo de rol desde tu namespace -----
-    String NS = roleNamespace; // inyectado con @Value
-    Object nsObj = user.getClaims().get(NS);
-    String role = null;
-    if (nsObj instanceof Map<?,?> map) {
-      Object r = map.get("role");
-      role = (r == null) ? null : r.toString();
+        return http.build();
     }
 
-    // Authorities originales + ROLE_XXX si viene en el claim
-    var authorities = new java.util.HashSet<GrantedAuthority>(user.getAuthorities());
-    if (role != null && !role.isBlank()) {
-      authorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+    private OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
+        OidcUserService delegate = new OidcUserService();
+
+        return (OidcUserRequest req) -> {
+            OidcUser user = delegate.loadUser(req);
+
+            // Mapeo del rol desde tu namespace
+            String NS = roleNamespace;
+            Object nsObj = user.getClaims().get(NS);
+
+            String role = null;
+
+            if (nsObj instanceof Map<?, ?> map) {
+                Object r = map.get("role");
+                role = (r == null) ? null : r.toString();
+            }
+
+            // Authorities originales + ROLE_XXX si viene en el claim
+            var authorities = new HashSet<GrantedAuthority>(user.getAuthorities());
+
+            if (role != null && !role.isBlank()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+            }
+
+            return new DefaultOidcUser(authorities, user.getIdToken(), user.getUserInfo());
+        };
     }
 
-    // devolvemos un OidcUser con esas authorities
-    return new DefaultOidcUser(authorities, user.getIdToken(), user.getUserInfo());
-  };
-}
+    private LogoutSuccessHandler oidcLogout(ClientRegistrationRepository clients) {
+        var handler = new OidcClientInitiatedLogoutSuccessHandler(clients);
 
-
-  private LogoutSuccessHandler oidcLogout(ClientRegistrationRepository clients) {
-    var h = new OidcClientInitiatedLogoutSuccessHandler(clients);
-    // tu URL pública/home
-    h.setPostLogoutRedirectUri("http://3.95.118.101:8080/");
-    return h;
-  }
+        handler.setPostLogoutRedirectUri("http://3.95.118.101:8080/");
+        return handler;
+    }
 }
