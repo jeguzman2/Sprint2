@@ -35,9 +35,20 @@ public class SecurityConfig {
     .authorizeHttpRequests(auth -> auth
       .requestMatchers("/health", "/public/**", "/").permitAll()
       .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+      .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
       .requestMatchers("/admin/**").hasRole("ADMIN")
-      .anyRequest().authenticated()
+
+      
+      //  Rutas “normales” de tu API (autenticado)
+        .requestMatchers("/usuarios/**").authenticated()
+        .requestMatchers("/pedidos/**").authenticated()
+        .requestMatchers("/bodegas/**").authenticated()
+
+        //  Todo lo que no esté explícitamente arriba → RECHAZADO
+        .anyRequest().denyAll()
     )
+
+
     .oauth2Login(oauth -> oauth
       .loginPage("/oauth2/authorization/auth0")
       // AQUI: pásale un OAuth2UserService, no un usuario
