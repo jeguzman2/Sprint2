@@ -100,12 +100,12 @@ public ResponseEntity<List<Usuario>> listarUsuarios(
 }
 
 @GetMapping("/vulnerable")
-public ResponseEntity<?> probarVulnerable(@RequestParam String id) {
+public ResponseEntity<?> probarVulnerable(@RequestParam String idRaw) {
     Map<String, Object> body = new HashMap<>();
 
     try {
         // 1. Detectar ataque antes de tocar la BD
-        String lower = id.toLowerCase();
+        String lower = idRaw.toLowerCase();
         boolean esMalicioso =
                 lower.contains(" or ")
              || lower.contains(" and ")
@@ -126,7 +126,7 @@ public ResponseEntity<?> probarVulnerable(@RequestParam String id) {
         }
 
         // 2. Si no es malicioso, ejecutamos la query VULNERABLE
-        String sql = "SELECT * FROM usuario WHERE id_usuario = " + id;
+        String sql = "SELECT * FROM usuario WHERE id_usuario = " + idRaw;
 
         List<Usuario> usuarios = entityManager
                 .createNativeQuery(sql, Usuario.class)
