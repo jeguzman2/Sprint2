@@ -6,7 +6,9 @@ WORKDIR /app
 
 # Copia los archivos de Maven
 COPY pom.xml .
-COPY src ../src
+
+# Copia el código fuente
+COPY src ./src
 
 # Construye el JAR sin correr tests (para que sea más rápido)
 RUN mvn -q -e -DskipTests clean package
