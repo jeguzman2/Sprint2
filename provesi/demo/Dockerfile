@@ -8,7 +8,7 @@ WORKDIR /app
 COPY pom.xml .
 
 # Copia el código fuente
-COPY src /src
+COPY src src
 
 # Construye el JAR sin correr tests (para que sea más rápido)
 RUN mvn -q -e -DskipTests clean package
