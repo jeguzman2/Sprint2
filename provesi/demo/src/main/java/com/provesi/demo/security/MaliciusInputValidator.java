@@ -9,7 +9,7 @@ public class MaliciusInputValidator {
 
         String lower = texto.toLowerCase();
 
-        // patrones típicos de SQL injection
+        // patrones típicos de SQL injection malardos
         return lower.contains(" or ")
             || lower.contains(" and ")
             || lower.contains("1=1")

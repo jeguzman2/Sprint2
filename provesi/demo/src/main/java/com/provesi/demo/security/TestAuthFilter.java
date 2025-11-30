@@ -25,7 +25,7 @@ public class TestAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        // FORMATO:  Authorization: Test ADMIN
+        //ACA PARA ADMIN :PROBAR ADMIN
         if (header != null && header.startsWith("Test ")) {
             String role = header.substring(5).trim();
 

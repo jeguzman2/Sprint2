@@ -1,5 +1,6 @@
 package com.provesi.demo.security;
 
+import org.aspectj.weaver.ast.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/health", "/public/**", "/").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                .requestMatchers(HttpMethod.POST," /productos").permitAll()
+                .requestMatchers(HttpMethod.POST, "/pedidos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
@@ -54,7 +58,7 @@ public class SecurityConfig {
         return (OidcUserRequest req) -> {
             OidcUser user = delegate.loadUser(req);
 
-            // Mapeo del rol desde tu namespace
+            // Mapeo del rol dependiendo del NAMESPACE que nosotros tengamos aja 
             String NS = roleNamespace;
             Object nsObj = user.getClaims().get(NS);
 
@@ -65,7 +69,7 @@ public class SecurityConfig {
                 role = (r == null) ? null : r.toString();
             }
 
-            // Authorities originales + ROLE_XXX si viene en el claim
+            // Authorities originales + ROLE si viene en el claim ese
             var authorities = new HashSet<GrantedAuthority>(user.getAuthorities());
 
             if (role != null && !role.isBlank()) {
