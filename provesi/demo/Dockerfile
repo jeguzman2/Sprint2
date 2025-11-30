@@ -24,10 +24,5 @@ COPY --from=builder /app/target/*.jar app.jar
 # Indica el puerto
 EXPOSE 8080
 
-# Variables de entorno que Render te pedirá luego
-ENV DB_ADDRESS="dpg-d4ls1deuk2gs738ivaj0-a.oregon-postgres.render.com"
-ENV DB_USER="provesi_user"
-ENV DB_PASSWORD="9PHcDK46Qk5VXmq112JWUEf41y4dRFAf"
-
 # Comando de ejecución
 ENTRYPOINT ["java", "-jar", "app.jar"]
