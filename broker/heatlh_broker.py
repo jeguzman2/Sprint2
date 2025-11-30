@@ -4,7 +4,10 @@ import smtplib
 from email.mime.text import MIMEText
 
 # CONFIGURACIÓN BÁSICA
-HEALTH_URL = "http://3.95.118.101:8080/actuator/health"
+SERVICES = {
+    "SpringBoot Provesi API": "https://micro-pedidos-iua0.onrender.com/",
+    "FastAPI Inventario": "https://micro-inventario.onrender.com/",
+}
 CHECK_INTERVAL = 10  # segundos entre chequeos
 FAIL_LIMIT = 5       # fallas consecutivas antes de alerta
 

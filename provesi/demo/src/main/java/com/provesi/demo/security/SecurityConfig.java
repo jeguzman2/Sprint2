@@ -35,10 +35,12 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .addFilterBefore(testAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/health", "/public/**", "/").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                 .requestMatchers(HttpMethod.POST," /productos").permitAll()
                 .requestMatchers(HttpMethod.POST, "/pedidos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/pedidos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
