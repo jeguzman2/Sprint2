@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copia los archivos de Maven
 COPY pom.xml .
-COPY src provesi/demo/src
+COPY src ./src
 
 # Construye el JAR sin correr tests (para que sea más rápido)
 RUN mvn -q -e -DskipTests clean package
