@@ -1,8 +1,8 @@
 package com.provesi.demo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 
 import org.springframework.stereotype.Service;
 
@@ -30,9 +30,11 @@ public class PedidoService {
 
     // Crear un pedido
     public Pedido crearPedido(Pedido pedido) {
+        
         if (pedido.getEstado() == null) {
             pedido.setEstado(EstadoPedido.ACTIVO);
         }
+        pedido.setFecha(LocalDate.now());
         return pedidoRepository.save(pedido);
     }
 
