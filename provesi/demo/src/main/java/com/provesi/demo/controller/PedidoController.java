@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.provesi.demo.DTO.PedidoRequest;
 import com.provesi.demo.model.EstadoPedido;
 import com.provesi.demo.model.Pedido;
 import com.provesi.demo.security.InputSanitizer;
@@ -28,50 +29,53 @@ public class PedidoController {
         this.pedidoService = pedidoService;
     }
 
-    //POST - Crear un nuevo pedido
+    // POST - Crear pedido con DTO
     @PostMapping
-    public ResponseEntity<?> crearPedido(@RequestBody Pedido pedido) {
-    // Validar total del pedido
-       try {
-            // Validar total del pedido
-            InputSanitizer.validateTotal(pedido.getTotal());
+    public ResponseEntity<?> crearPedido(@RequestBody PedidoRequest request) {
+        try {
+            //  Validaciones de entrada
+            InputSanitizer.validateTotal(request.getTotal());
+            InputSanitizer.validateEstado(request.getEstado());
 
-            // Validar estado del pedido
-            InputSanitizer.validateEstado(pedido.getEstado().toString());
+            // Convertir DTO → Entidad
+            Pedido pedido = new Pedido();
+            pedido.setTotal(request.getTotal());
+            pedido.setEstado(EstadoPedido.valueOf(request.getEstado()));
 
             Pedido nuevoPedido = pedidoService.crearPedido(pedido);
             return ResponseEntity.ok(nuevoPedido);
-            
-        } catch (ValidationException e) {  // <-- ATRAPA ValidationException
+
+        } catch (ValidationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    // GET - Listar todos los pedidos
+    // GET - Listar pedidos
     @GetMapping
     public ResponseEntity<List<Pedido>> obtenerPedidos() {
-        List<Pedido> pedidos = pedidoService.obtenerTodos();
-        return ResponseEntity.ok(pedidos);
+        return ResponseEntity.ok(pedidoService.obtenerTodos());
     }
 
-    // Cambiar estado con PUT (ASR3- Disponibilidad)
-    
+    // PUT - Cambiar estado del pedido
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> cambiarEstado(
-        @PathVariable Long id,
-        @RequestParam EstadoPedido nuevoEstado) {
-            
+            @PathVariable Long id,
+            @RequestParam String nuevoEstado) {
+
         try {
-            // Validar ID
+            //  Validación de ID
             InputSanitizer.validateId(id);
 
-            // Validar estado
-            InputSanitizer.validateEstado(nuevoEstado.toString());
+            //  Validar estado entrada (String)
+            InputSanitizer.validateEstado(nuevoEstado);
 
-            Pedido actualizado = pedidoService.cambiarEstado(id, nuevoEstado);
+            // Convertir string → Enum
+            EstadoPedido estadoEnum = EstadoPedido.valueOf(nuevoEstado);
+
+            Pedido actualizado = pedidoService.cambiarEstado(id, estadoEnum);
             return ResponseEntity.ok(actualizado);
-            
-        } catch (ValidationException e) {  // <-- ATRAPA ValidationException
+
+        } catch (ValidationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
