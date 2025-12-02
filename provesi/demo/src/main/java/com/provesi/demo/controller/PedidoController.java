@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.provesi.demo.model.EstadoPedido;
 import com.provesi.demo.model.Pedido;
+import com.provesi.demo.security.InputSanitizer;
 import com.provesi.demo.service.PedidoService;
 
 @RestController
@@ -29,6 +30,12 @@ public class PedidoController {
     //POST - Crear un nuevo pedido
     @PostMapping
     public ResponseEntity<Pedido> crearPedido(@RequestBody Pedido pedido) {
+    // Validar total del pedido
+        InputSanitizer.validateTotal(pedido.getTotal());
+
+        // Validar estado del pedido
+        InputSanitizer.validateEstado(pedido.getEstado().toString());
+
         Pedido nuevoPedido = pedidoService.crearPedido(pedido);
         return ResponseEntity.ok(nuevoPedido);
     }
@@ -47,7 +54,13 @@ public class PedidoController {
         @PathVariable Long id,
         @RequestParam EstadoPedido nuevoEstado) {
 
-    Pedido actualizado = pedidoService.cambiarEstado(id, nuevoEstado);
-    return ResponseEntity.ok(actualizado);
-}
+        // Validar ID
+        InputSanitizer.validateId(id);
+
+        // Validar estado
+        InputSanitizer.validateEstado(nuevoEstado.toString());
+
+        Pedido actualizado = pedidoService.cambiarEstado(id, nuevoEstado);
+        return ResponseEntity.ok(actualizado);
+    }
 }

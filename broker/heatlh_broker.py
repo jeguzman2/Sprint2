@@ -5,8 +5,8 @@ from email.mime.text import MIMEText
 
 # CONFIGURACIÓN BÁSICA
 SERVICES = {
-    "SpringBoot Provesi API": "https://micro-pedidos-iua0.onrender.com/",
-    "FastAPI Inventario": "https://micro-inventario.onrender.com/",
+    "SpringBoot Provesi API": "https://micro-pedidos-iua0.onrender.com/actuator/health",
+    "FastAPI Inventario": "https://micro-inventario.onrender.com/health",
 }
 CHECK_INTERVAL = 10  # segundos entre chequeos
 FAIL_LIMIT = 5       # fallas consecutivas antes de alerta
