@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST," /productos").permitAll()
                 .requestMatchers(HttpMethod.POST, "/pedidos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/pedidos").permitAll()
+                .requestMatchers("/pedidos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
